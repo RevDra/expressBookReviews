@@ -61,23 +61,29 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
           filtered_book['reviews'][reviewer] = review;
           books[isbn] = filtered_book;
       }
-      res.send(`The review for the book with ISBN  ${isbn} has been added/updated.`);
+      // Sửa dòng res.send thành res.json để trả về đúng format yêu cầu
+      res.status(200).json({
+          message: "Review added/updated successfully",
+          reviews: filtered_book['reviews']
+      });
   }
   else{
-      res.send("Unable to find book!");
+      res.status(404).json({ message: "Unable to find book!" });
   }
 });
 
+// Delete a book review
 regd_users.delete("/auth/review/:isbn", (req, res) => {
   const isbn = req.params.isbn;
   let reviewer = req.session.authorization['username'];
   let filtered_book = books[isbn];
   if (filtered_book) {
       delete filtered_book['reviews'][reviewer];
-      res.send(`Reviews for the ISBN  ${isbn} posted by the user ${reviewer} deleted.`);
+      // Sửa dòng res.send thành res.json để trả về đúng format yêu cầu
+      res.status(200).json({ message: `Review for ISBN ${isbn} deleted` });
   }
   else{
-      res.send("Unable to find book!");
+      res.status(404).json({ message: "Unable to find book!" });
   }
 });
 
